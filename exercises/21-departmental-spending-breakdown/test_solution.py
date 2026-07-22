@@ -1,0 +1,37 @@
+import sqlite3
+import unittest
+from pathlib import Path
+
+
+CASES = [{'tables': {'departments': (['dept_id', 'dept_name'], [[1, 'HR'], [2, 'IT'], [3, 'Finance']]), 'expenses': (['expense_id', 'dept_id', 'amount', 'expense_type'], [[1, 1, 5000, 'Travel'], [2, 1, 2000, 'Supplies'], [3, 1, 3000, 'Miscellaneous'], [4, 2, 10000, 'Travel'], [5, 2, 8000, 'Supplies'], [6, 3, 2000, 'Travel'], [7, 3, 10000, 'Supplies']])}, 'expected': [['HR', 5000, 10000, 3], ['IT', 10000, 18000, 2]]}, {'tables': {'departments': (['dept_id', 'dept_name'], [[1, 'Logistics'], [2, 'Marketing'], [3, 'Operations']]), 'expenses': (['expense_id', 'dept_id', 'amount', 'expense_type'], [[1, 1, 12000, 'Travel'], [2, 1, 6000, 'Miscellaneous'], [3, 2, 15000, 'Travel'], [4, 2, 10000, 'Supplies'], [5, 3, 8000, 'Travel'], [6, 3, 15000, 'Supplies'], [7, 3, 7000, 'Miscellaneous']])}, 'expected': [['Logistics', 12000, 18000, 2], ['Marketing', 15000, 25000, 2]]}]
+
+
+def create_case(case):
+    db = sqlite3.connect(":memory:")
+    for name, (headers, rows) in case["tables"].items():
+        values_by_column = list(zip(*rows)) if rows else [[] for _ in headers]
+        types = []
+        for values in values_by_column:
+            non_null = [value for value in values if value is not None]
+            types.append("INTEGER" if all(isinstance(value, int) for value in non_null) else "TEXT")
+        columns = ", ".join(f'"{header}" {kind}' for header, kind in zip(headers, types))
+        db.execute(f'CREATE TABLE "{name}" ({columns})')
+        placeholders = ", ".join("?" for _ in headers)
+        db.executemany(f'INSERT INTO "{name}" VALUES ({placeholders})', rows)
+    return db
+
+
+class SolutionTests(unittest.TestCase):
+    def test_sample_cases(self):
+        sql = (Path(__file__).parent / "solution.sql").read_text(encoding="utf-8")
+        statements = [statement.strip() for statement in sql.split(";") if statement.strip()]
+        for index, case in enumerate(CASES, 1):
+            with self.subTest(sample=index), create_case(case) as db:
+                actual = []
+                for statement in statements:
+                    actual.extend([list(row) for row in db.execute(statement).fetchall()])
+                self.assertEqual(case["expected"], actual)
+
+
+if __name__ == "__main__":
+    unittest.main()
