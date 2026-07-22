@@ -1,0 +1,1 @@
+SELECT SUM(amount) FROM transactions WHERE date BETWEEN '2017-05-01' AND '2017-05-31';
