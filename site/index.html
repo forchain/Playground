@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SQL 与编程笔试题库，提供题目、解析与参考答案。" />
+    <link rel="icon" href="data:," />
+    <title>笔试题库</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <a class="brand" href="#" aria-label="返回题库首页"><span class="brand-mark">Q</span><span>笔试题库</span></a>
+      <button class="menu-button" id="menu-button" type="button" aria-label="打开题目目录" aria-expanded="false">目录</button>
+      <label class="search-field" for="search">
+        <span class="search-symbol" aria-hidden="true">⌕</span>
+        <input id="search" type="search" placeholder="搜索题目、主题或关键词" autocomplete="off" />
+      </label>
+      <div class="header-meta"><span id="total-count">加载中</span><button class="text-button" id="reset-button" type="button">重置</button></div>
+    </header>
+
+    <main class="library-layout">
+      <aside class="library-nav" id="library-nav" aria-label="题目导航">
+        <div class="nav-controls">
+          <div class="segment-control" aria-label="题目领域">
+            <button class="segment is-active" data-domain="all" type="button">全部</button>
+            <button class="segment" data-domain="sql" type="button">SQL</button>
+            <button class="segment" data-domain="programming" type="button">编程</button>
+          </div>
+          <label class="filter-label" for="difficulty">难度
+            <select id="difficulty"><option value="all">全部难度</option></select>
+          </label>
+          <label class="filter-label" for="topic">主题
+            <select id="topic"><option value="all">全部主题</option></select>
+          </label>
+        </div>
+        <div class="question-nav-header"><span id="visible-count">0 道题</span><span id="active-context">全部题目</span></div>
+        <nav id="question-list" class="question-list" aria-label="筛选后的题目"></nav>
+      </aside>
+      <div class="nav-scrim" id="nav-scrim" aria-hidden="true"></div>
+      <article id="reader" class="reader" tabindex="-1" aria-live="polite">
+        <div class="reader-loading">正在整理题库内容…</div>
+      </article>
+    </main>
+
+    <template id="empty-template">
+      <section class="empty-state"><p class="eyebrow">没有匹配结果</p><h1>换一个关键词或筛选条件</h1><button class="primary-button" type="button" data-reset>清除筛选</button></section>
+    </template>
+    <script src="app.js"></script>
+  </body>
+</html>
